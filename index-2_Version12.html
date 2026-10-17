@@ -1,0 +1,1345 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="description" content="Nox Auto — Guide pratique et simple pour comprendre voyants, pièces et symptômes d'une voiture. Conseils généraux et niveaux d'urgence." />
+<title>Nox Auto — Comprendre sa voiture</title>
+<style>
+  :root{
+    --bg:#070707;
+    --panel:#121212;
+    --muted:#b8b3a7;
+    --text:#f7f4ed;
+    --gold:#d9ad4b;
+    --gold2:#f5d887;
+    --line:#302617;
+    --red:#ff625e;
+    --orange:#ffb44d;
+    --green:#7ad9a0;
+    --glass: rgba(255,255,255,0.02);
+    --radius:14px;
+    --ease: cubic-bezier(.2,.9,.2,1);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:linear-gradient(180deg,var(--bg),#050505 200px);
+    color:var(--text);
+    font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    line-height:1.5;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  a{color:inherit}
+  button,input,textarea{font:inherit}
+  img{max-width:100%;display:block}
+  .wrap{width:min(1120px,94%);margin:0 auto;padding:0 8px}
+
+  /* NAV */
+  header.topbar{
+    position:sticky;top:0;z-index:40;
+    background:linear-gradient(180deg, rgba(9,9,9,0.6), rgba(9,9,9,0.4));
+    backdrop-filter: blur(6px);
+    border-bottom:1px solid rgba(255,255,255,0.03);
+  }
+  .topbar .inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
+  .brand{font-weight:900;letter-spacing:2px;font-size:1.15rem;text-decoration:none;display:inline-flex;align-items:center;gap:10px}
+  .brand span{color:var(--gold);font-weight:900}
+  nav.primary{display:flex;gap:14px;align-items:center}
+  nav.primary a{color:var(--muted);text-decoration:none;padding:8px;border-radius:8px;font-size:.94rem}
+  nav.primary a:hover{color:var(--gold2);background:var(--glass)}
+  .nav-actions{display:flex;gap:8px;align-items:center}
+
+  /* hamburger for mobile */
+  .burger{display:none;width:42px;height:42px;border-radius:9px;border:1px solid rgba(255,255,255,0.03);background:transparent;align-items:center;justify-content:center;cursor:pointer}
+  .burger div{width:18px;height:2px;background:var(--text);border-radius:2px;position:relative}
+  .burger div:before,.burger div:after{content:'';position:absolute;left:0;right:0;height:2px;background:var(--text);border-radius:2px}
+  .burger div:before{top:-6px} .burger div:after{bottom:-6px}
+
+  /* HERO */
+  .hero{padding:64px 0;background:
+    radial-gradient(800px 300px at 80% 20%, rgba(80,48,8,0.12), transparent 10%),
+    linear-gradient(180deg, rgba(18,12,6,0.02), transparent 40%);}
+  .hero-grid{display:grid;grid-template-columns:1.4fr .9fr;gap:36px;align-items:center}
+  .eyebrow{color:var(--gold2);text-transform:uppercase;letter-spacing:2.5px;font-weight:700;font-size:.78rem}
+  h1{font-size:clamp(2.4rem,5.2vw,4rem);margin:12px 0 14px;line-height:1.02}
+  h1 span{color:var(--gold)}
+  .lead{color:#d9d6cf;max-width:680px;font-size:1.02rem}
+
+  .actions{display:flex;gap:12px;margin-top:18px}
+  .btn{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:1px solid var(--gold);cursor:pointer;background:transparent;color:var(--text);font-weight:700}
+  .btn.primary{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#181205}
+  .btn.ghost{border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--muted);font-weight:600}
+
+  .hero-panel{background:linear-gradient(180deg,#0f0f0f,#0b0b0b);padding:22px;border-radius:16px;border:1px solid rgba(255,255,255,0.03)}
+  .dashboard{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+  .dash{background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);padding:12px;border-radius:10px;text-align:center;border:1px solid rgba(255,255,255,0.02)}
+  .dash b{display:block;font-size:1.4rem}
+  .dash span{font-size:.78rem;color:var(--muted)}
+
+  section{padding:56px 0}
+  .heading{max-width:740px;margin-bottom:16px}
+  .heading p{color:var(--muted)}
+
+  /* SEARCH & FILTERS */
+  .searchbar{display:flex;gap:10px;align-items:center}
+  form.search-form{display:flex;gap:8px;flex:1;align-items:center}
+  .input{
+    flex:1;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);
+    background:var(--panel);color:var(--text);outline:none;
+  }
+  .search-controls{display:flex;gap:8px;align-items:center}
+  .clear-btn{background:transparent;border:1px solid rgba(255,255,255,0.03);padding:8px;border-radius:10px;color:var(--muted);cursor:pointer}
+  .clear-btn:hover{color:var(--text);border-color:var(--gold)}
+
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+  .filter{
+    padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.03);background:var(--glass);color:var(--muted);cursor:pointer;font-weight:600;
+  }
+  .filter.active{background:linear-gradient(90deg,var(--gold2),var(--gold));color:#1b1206;box-shadow:0 6px 18px rgba(0,0,0,0.24)}
+  .chip{display:inline-flex;gap:8px;align-items:center;padding:6px 9px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.02);font-size:.85rem;color:var(--muted)}
+
+  /* RESULTS */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+    padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);
+    display:flex;flex-direction:column;gap:10px;transition:transform .18s var(--ease), box-shadow .18s var(--ease);
+  }
+  .card:hover{transform:translateY(-6px);box-shadow:0 18px 50px rgba(0,0,0,0.5)}
+  .symbol{width:58px;height:58px;border-radius:12px;background:#15120f;display:grid;place-items:center;font-size:1.45rem;border:1px solid rgba(255,255,255,0.03)}
+  .pill{font-size:.72rem;padding:6px 8px;border-radius:999px;border:1px solid rgba(255,255,255,0.02);color:var(--gold2);background:transparent}
+  .card h3{margin:6px 0 0;font-size:1.05rem}
+  .card p{margin:0;color:var(--muted);font-size:.95rem}
+
+  /* DETAIL PANEL */
+  .detail{
+    margin-top:18px;padding:18px;border-radius:12px;background:linear-gradient(180deg,#0e0e0e,#0a0a0a);border:1px solid rgba(255,255,255,0.03)
+  }
+  .urgency-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;font-weight:700}
+  .urgency-high{background:linear-gradient(90deg,var(--red),#ff867f);color:#fff}
+  .urgency-medium{background:linear-gradient(90deg,var(--orange),#ffd38a);color:#2b1908}
+  .urgency-low{background:linear-gradient(90deg,var(--green),#9ff2b8);color:#073821}
+
+  .detail-grid{display:grid;grid-template-columns:1fr 320px;gap:16px;margin-top:12px}
+  .detail-side{background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)}
+  .detail h3{margin:0 0 8px}
+  .detail ul{padding-left:18px;color:var(--muted)}
+  .detail .small{font-size:.88rem;color:var(--muted);margin-top:10px}
+
+  /* EMPTY */
+  .empty{margin-top:14px;padding:14px;border-radius:12px;border:1px dashed rgba(255,255,255,0.03);color:var(--muted);background:rgba(255,255,255,0.01)}
+  /* RECOMMENDATIONS */
+  .recommend{margin-top:18px}
+
+  /* FOOTER */
+  footer{padding:24px 0;border-top:1px solid rgba(255,255,255,0.02);color:var(--muted);font-size:.9rem}
+  .foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+  /* responsive */
+  @media (max-width:992px){
+    .hero-grid{grid-template-columns:1fr}
+    .detail-grid{grid-template-columns:1fr}
+    nav.primary{display:none}
+    .burger{display:flex}
+  }
+  @media (max-width:760px){
+    .cards{grid-template-columns:1fr}
+    .dashboard{grid-template-columns:repeat(3,1fr);gap:8px}
+    .topbar .inner{padding:10px 0}
+  }
+</style>
+</head>
+<body>
+<header class="topbar" role="banner">
+  <div class="wrap inner">
+    <a class="brand" href="#home" aria-label="Nox Auto - accueil">NOX <span>AUTO</span></a>
+
+    <nav class="primary" role="navigation" aria-label="Navigation principale">
+      <a href="#recherche">Rechercher</a>
+      <a href="#voyants">Voyants</a>
+      <a href="#pieces">Pièces</a>
+      <a href="#securite">Sécurité</a>
+    </nav>
+
+    <div class="nav-actions" aria-hidden="false">
+      <button class="btn ghost" onclick="document.getElementById('search').focus()" title="Chercher (raccourci /)">
+        🔍 Rechercher
+      </button>
+      <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobileNav">
+        <div></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- mobile nav -->
+  <div id="mobileNav" style="display:none;background:linear-gradient(180deg,#0b0b0b,#060606);border-top:1px solid rgba(255,255,255,0.02);">
+    <div class="wrap" style="padding:10px 0;display:flex;flex-direction:column;gap:8px">
+      <a href="#recherche">Rechercher</a>
+      <a href="#voyants">Voyants</a>
+      <a href="#pieces">Pièces</a>
+      <a href="#securite">Sécurité</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="home">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">Le guide auto simple</div>
+        <h1>Comprends ta voiture.<br><span>Sans te compliquer.</span></h1>
+        <p class="lead">Cherche un voyant, découvre une pièce et comprends à quoi elle sert. Nox Auto t'aide à apprendre les bases de l'automobile avec des explications claires et sûres.</p>
+        <div class="actions">
+          <a class="btn primary" href="#recherche">Rechercher un sujet</a>
+          <a class="btn ghost" href="#voyants">Voir les voyants</a>
+        </div>
+      </div>
+
+      <aside class="hero-panel" aria-hidden="false">
+        <div class="eyebrow">Dans Nox Auto</div>
+        <h2>Une question sur ta voiture ?</h2>
+        <p style="color:var(--muted)">Commence par taper un mot (ex. batterie, frein, huile) ou décris un symptôme.</p>
+        <div class="dashboard" aria-hidden="true">
+          <div class="dash"><b>⚠️</b><span>Voyants</span></div>
+          <div class="dash"><b>⚙️</b><span>Pièces</span></div>
+          <div class="dash"><b>▶</b><span>Vidéos</span></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- SEARCH -->
+  <section id="recherche" aria-labelledby="searchTitle">
+    <div class="wrap">
+      <div class="heading">
+        <div class="eyebrow">Trouver une explication</div>
+        <h2 id="searchTitle">Que veux-tu comprendre ?</h2>
+        <p>Recherche par voyant, pièce ou symptôme. Décris aussi une panne pour obtenir des pistes générales. Les procédures varient selon la marque et le modèle.</p>
+      </div>
+
+      <div class="searchbar" role="search" aria-label="Recherche principale">
+        <form id="searchForm" class="search-form" autocomplete="off">
+          <input id="search" class="input" type="search" placeholder="Ex. voyant moteur, batterie, frein…" aria-label="Rechercher une explication" />
+          <div class="search-controls">
+            <button class="btn primary" type="submit" id="searchBtn">Rechercher</button>
+            <button class="clear-btn" type="button" id="clearBtn" title="Effacer la recherche">Effacer</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="filters" id="filters" role="region" aria-label="Filtres">
+        <button class="filter active" data-cat="Tous" type="button">Tout</button>
+        <button class="filter" data-cat="Voyant" type="button">Voyants</button>
+        <button class="filter" data-cat="Pièce" type="button">Pièces</button>
+        <button class="filter" data-cat="Symptôme" type="button">Symptômes</button>
+        <span class="chip" style="margin-left:8px">Afficher : <strong id="count">—</strong></span>
+        <button class="filter" id="urgentToggle" data-urgent="false" type="button" title="Afficher uniquement les éléments urgents">Urgent seulement</button>
+      </div>
+
+      <div id="resultsWrap" aria-live="polite">
+        <div class="cards" id="results" role="list"></div>
+        <div id="empty" class="empty" role="status" style="display:none">Aucun résultat. Essaie « huile », « batterie » ou « voyant moteur ».</div>
+      </div>
+
+      <div class="box" style="margin-top:22px">
+        <div class="eyebrow">Diagnostic guidé</div>
+        <h3>Décris le problème avec tes mots</h3>
+        <p class="small">Ex. : « ma voiture fait un bruit quand je freine », « elle ne démarre pas » ou « un voyant orange est allumé ».</p>
+        <textarea id="problemText" rows="3" class="input" placeholder="Décris ce que tu remarques…" aria-label="Décrire le problème"></textarea>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn primary" id="diagnoseBtn" type="button">Trouver des pistes</button>
+        </div>
+        <div id="diagnosis" class="detail" aria-live="polite" style="display:none"></div>
+      </div>
+
+      <div id="detail" class="detail" aria-live="polite" style="display:none"></div>
+    </div>
+  </section>
+
+  <!-- VOYANTS -->
+  <section id="voyants">
+    <div class="wrap two">
+      <div class="box">
+        <div class="eyebrow">À retenir</div>
+        <h2>La couleur et le symbole importent</h2>
+        <p>La couleur aide à comprendre l'urgence, mais le manuel du véhicule reste l'autorité. En cas de doute, arrête-toi en sécurité.</p>
+        <ul>
+          <li><strong style="color:var(--red)">Rouge :</strong> danger potentiel — arrête-toi dès que possible.</li>
+          <li><strong style="color:var(--orange)">Orange :</strong> à vérifier rapidement.</li>
+          <li><strong style="color:var(--green)">Vert / Bleu :</strong> information ou fonction active.</li>
+        </ul>
+      </div>
+
+      <div class="box">
+        <div class="eyebrow">Apprendre en vidéo</div>
+        <h2>Voir les gestes expliqués</h2>
+        <p>Les vidéos aident mais choisis une source fiable et adaptée à ton modèle.</p>
+        <a class="video-link" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=comprendre+voyants+tableau+de+bord">▶ Comprendre les voyants</a>
+        <a class="video-link" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=pieces+moteur+voiture+explication">▶ Découvrir les pièces moteur</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PIECES -->
+  <section id="pieces">
+    <div class="wrap">
+      <div class="heading">
+        <div class="eyebrow">Les bases de la mécanique</div>
+        <h2>Apprendre avant d'intervenir</h2>
+        <p>Fiches courtes : ce que c'est, ce que tu peux vérifier, et quand appeler un professionnel.</p>
+      </div>
+
+      <div class="cards" id="piecesCards">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- SECURITE -->
+  <section id="securite">
+    <div class="wrap">
+      <div class="heading">
+        <div class="eyebrow">Sécurité d'abord</div>
+        <h2>Quand faut-il arrêter de rouler ?</h2>
+      </div>
+
+      <div class="safety red">
+        <strong>Arrête-toi en sécurité et demande de l'aide</strong> si le voyant rouge de pression d'huile ou de température moteur reste allumé, si les freins semblent défaillants, si de la fumée apparaît ou si la voiture se comporte anormalement.
+      </div>
+
+      <div class="safety" style="margin-top:10px">
+        <strong>Important :</strong> Nox Auto fournit des informations générales et ne remplace pas le manuel du véhicule ni un professionnel qualifié. Avant toute réparation, vérifie la procédure adaptée au modèle exact.
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot" style="padding:16px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+    <span>© <span id="year"></span> Nox Auto — Guide automobile en construction</span>
+    <span style="color:var(--muted)">Noir & or · Apprendre en sécurité</span>
+  </div>
+</footer>
+
+<script>
+/* =========================
+   Données : problèmes & solutions
+   (Remplace / étend cette liste si besoin)
+   ========================= */
+const items = [
+  {
+    id:'moteur-cale',
+    cat:'Symptôme',
+    icon:'⚙️',
+    title:'Le moteur cale',
+    short:'Le moteur s’arrête ou perd le régime.',
+    tags:'cale moteur carburant injection allumage',
+    urgency:'Moyen — si tu bloques dans la circulation, mets-toi en sécurité.',
+    body:[
+      'Une panne de carburant, d’allumage, d’air ou d’électronique peut provoquer un calage.',
+      'Le véhicule peut caler au ralenti, à l’accélération ou après un arrêt.',
+      'Un diagnostic est nécessaire si le problème se répète.'
+    ],
+    solution:[
+      'Vérifier le niveau de carburant et le filtre à carburant.',
+      'Contrôler la batterie, les bornes et le démarreur.',
+      'Vérifier le filtre à air et les conduits d’admission.',
+      'Faire diagnostiquer l’injection, l’allumage ou l’électronique si le symptôme persiste.'
+    ],
+    video:'https://www.youtube.com/results?search_query=moteur+cale+voiture+causes'
+  },
+  {
+    id:'demarrage-difficile',
+    cat:'Symptôme',
+    icon:'🔑',
+    title:'Démarrage difficile',
+    short:'La voiture met du temps à démarrer ou ne démarre pas nettement.',
+    tags:'démarrage batterie démarreur allumage',
+    urgency:'Moyen — évite les tentatives répétées.',
+    body:[
+      'Le problème peut venir de la batterie, des bornes, du démarreur ou de l’allumage.',
+      'Les véhicules diesel peuvent aussi avoir un problème de préchauffage ou d’injection.',
+      'Un clic ou un silence complet ne donnent pas la même cause.'
+    ],
+    solution:[
+      'Contrôler la tension de la batterie et l’état des bornes.',
+      'Inspecter le démarreur et les câbles de démarrage.',
+      'Vérifier le préchauffage diesel si applicable.',
+      'Faire diagnostiquer l’injection ou le système électrique si le moteur ne démarre pas correctement.'
+    ],
+    video:'https://www.youtube.com/results?search_query=demarrage+difficile+voiture'
+  },
+  {
+    id:'bruit-moteur',
+    cat:'Symptôme',
+    icon:'🔊',
+    title:'Bruit moteur inhabituel',
+    short:'Un claquement, sifflement ou grondement apparaît.',
+    tags:'bruit moteur claquement sifflement',
+    urgency:'Moyen à élevé — si bruit fort et soudain, arrêter.',
+    body:[
+      'Un bruit mécanique peut venir du moteur, de la courroie, des poulies ou de l’échappement.',
+      'La position du bruit aide à orienter le diagnostic.',
+      'Un bruit fort ou soudain doit être vérifié rapidement.'
+    ],
+    solution:[
+      'Vérifier la courroie d’accessoire, les poulies et les fixations.',
+      'Contrôler le niveau d’huile et la présence de fuite.',
+      'Faire vérifier les supports moteur et les pièces de transmission.',
+      'Ne pas continuer si le bruit s’intensifie, si le moteur tourne mal ou si un voyant rouge s’allume.'
+    ],
+    video:'https://www.youtube.com/results?search_query=bruit+moteur+voiture+causes'
+  },
+  {
+    id:'perte-puissance',
+    cat:'Symptôme',
+    icon:'🐢',
+    title:'Perte de puissance',
+    short:'Le véhicule accélère moins bien ou peine à monter dans les tours.',
+    tags:'perte puissance acceleration turbo injection',
+    urgency:'Moyen à élevé — si tu ne peux pas rouler en sécurité, arrête-toi.',
+    body:[
+      'Les causes peuvent être l’alimentation, le turbo, l’admission d’air ou l’électronique.',
+      'Un voyant moteur peut s’allumer si le système détecte un problème.',
+      'La voiture peut aussi perdre du couple au ralenti ou en accélération.'
+    ],
+    solution:[
+      'Vérifier le filtre à air et le turbo si équipé.',
+      'Contrôler les bougies ou les injecteurs selon le moteur.',
+      'Faire lire les défauts moteur avec un outil de diagnostic.',
+      'S’assurer qu’aucune fuite d’air ou de carburant n’est présente.'
+    ],
+    video:'https://www.youtube.com/results?search_query=perte+de+puissance+voiture'
+  },
+  {
+    id:'surchauffe',
+    cat:'Symptôme',
+    icon:'🌡️',
+    title:'Le moteur chauffe trop',
+    short:'La température monte anormalement ou un voyant apparaît.',
+    tags:'surchauffe moteur refroidissement radiateur',
+    urgency:'Rouge — couper le moteur et laisser refroidir.',
+    body:[
+      'Le défaut peut venir du liquide de refroidissement, du thermostat ou du radiateur.',
+      'Une surchauffe prolongée peut endommager le moteur.',
+      'Laisser refroidir avant toute vérification.'
+    ],
+    solution:[
+      'Contrôler le niveau de liquide de refroidissement moteur froid.',
+      'Vérifier les fuites, le radiateur et le thermostat.',
+      'Contrôler la pompe à eau et le ventilateur de refroidissement.',
+      'Ne jamais ouvrir le bouchon à chaud sous pression.'
+    ],
+    video:'https://www.youtube.com/results?search_query=moteur+surchauffe+causes'
+  },
+  {
+    id:'fuite-huile',
+    cat:'Symptôme',
+    icon:'💧',
+    title:'Fuite d’huile',
+    short:'Une trace ou une flaque sous le véhicule.',
+    tags:'fuite huile moteur bouchon joint',
+    urgency:'Moyen — si le niveau baisse trop, ne pas rouler.',
+    body:[
+      'La fuite peut venir d’un joint, d’un bouchon ou d’un tuyau.',
+      'L’huile peut aussi être visible sur le moteur ou sous le véhicule.',
+      'La quantité et la couleur de la fuite aident à diagnostiquer la source.'
+    ],
+    solution:[
+      'Contrôler le niveau d’huile moteur.',
+      'Chercher les joints, le carter et les bouchons de vidange.',
+      'Vérifier les tuyaux et les pièces autour du moteur.',
+      'Faire réparer rapidement si le niveau baisse ou si le voyant d’huile s’allume.'
+    ],
+    video:'https://www.youtube.com/results?search_query=fuite+dhuile+voiture'
+  },
+  {
+    id:'fuite-coolant',
+    cat:'Symptôme',
+    icon:'💦',
+    title:'Fuite de liquide de refroidissement',
+    short:'Le niveau baisse ou une flaque apparaît sous le moteur.',
+    tags:'fuite refroidissement liquide radiateur',
+    urgency:'Moyen — ne pas rouler si la température monte.',
+    body:[
+      'Le liquide de refroidissement est vital au bon fonctionnement du moteur.',
+      'Une fuite peut surgir du radiateur, des tuyaux ou du bouchon.',
+      'Le moteur peut surchauffer rapidement si le niveau baisse.'
+    ],
+    solution:[
+      'Contrôler le niveau moteur froid.',
+      'Rechercher une fuite sur le radiateur, les tuyaux et le vase d’expansion.',
+      'Vérifier le bouchon de radiateur et l’état du liquide.',
+      'Ne pas rouler si le moteur chauffe ou si la fuite est importante.'
+    ],
+    video:'https://www.youtube.com/results?search_query=fuite+liquide+refroidissement+voiture'
+  },
+  {
+    id:'freinage-altere',
+    cat:'Symptôme',
+    icon:'🛑',
+    title:'Freinage altéré',
+    short:'La voiture freine moins bien ou la pédale change.',
+    tags:'frein pédale liquide plaquettes disque',
+    urgency:'Rouge — ne pas continuer à rouler.',
+    body:[
+      'Le problème peut venir du liquide, des plaquettes, des disques ou de la pompe.',
+      'Une pédale molle ou un freinage irrégulier est un risque sérieux.',
+      'Le voyant de frein peut aussi indiquer une anomalie.'
+    ],
+    solution:[
+      'Vérifier le niveau de liquide de frein et l’état des flexibles.',
+      'Contrôler l’usure des plaquettes et des disques.',
+      'Faire contrôler la pompe de frein et le système ABS si nécessaire.',
+      'Ne pas rouler si le freinage semble faible ou irrégulier.'
+    ],
+    video:'https://www.youtube.com/results?search_query=freinage+altere+voiture'
+  },
+  {
+    id:'bruit-frein',
+    cat:'Symptôme',
+    icon:'🔊',
+    title:'Bruit au freinage',
+    short:'Grincement, crissement ou frottement au freinage.',
+    tags:'bruit frein grincement plaquettes disque',
+    urgency:'Moyen à élevé — contrôler rapidement.',
+    body:[
+      'Un grincement peut provenir des plaquettes usées ou d’un dépôt.',
+      'Un bruit au freinage n’est pas à ignorer.',
+      'Le système de freinage est critique pour la sécurité.'
+    ],
+    solution:[
+      'Contrôler l’état des plaquettes et des disques.',
+      'Vérifier la présence de saletés ou de corrosion.',
+      'Faire contrôler le système si le bruit persiste après la vérification visuelle.',
+      'Ne pas rouler si le freinage devient inégal ou s’il y a un voyant rouge.'
+    ],
+    video:'https://www.youtube.com/results?search_query=bruit+au+freinage+voiture'
+  },
+  {
+    id:'embrayage-patine',
+    cat:'Pièce',
+    icon:'🧲',
+    title:'Embrayage qui patine',
+    short:'La voiture perd de la puissance au démarrage ou en accélération.',
+    tags:'embrayage patinage boîte vitesse',
+    urgency:'Moyen — éviter de forcer les vitesses.',
+    body:[
+      'Un embrayage usé ou sale peut patiner.',
+      'Le symptôme peut aussi venir de l’embrayage ou de la boite de vitesses.',
+      'Le problème se sent souvent au démarrage ou en montée.'
+    ],
+    solution:[
+      'Vérifier le niveau de liquide de commande si équipé.',
+      'Contrôler l’usure du kit embrayage.',
+      'Faire diagnostiquer la boîte et la commande si la sensation est irrégulière.',
+      'Éviter de forcer les rapports pour ne pas aggraver l’usure.'
+    ],
+    video:'https://www.youtube.com/results?search_query=embrayage+patine+voiture'
+  },
+  {
+    id:'vitesses-passent-mal',
+    cat:'Symptôme',
+    icon:'⚙️',
+    title:'Les vitesses passent mal',
+    short:'La voiture accroche, refuse une vitesse ou fait du bruit.',
+    tags:'vitesses boite vitesse embrayage transmission',
+    urgency:'Moyen — ne pas forcer le levier.',
+    body:[
+      'Le problème peut venir de la commande, de l’embrayage ou de la boîte.',
+      'Le symptôme dépend beaucoup du type de boite et du véhicule.',
+      'Un bruit ou une résistance au changement de vitesse ne doit pas être ignoré.'
+    ],
+    solution:[
+      'Vérifier l’état de l’embrayage et de la commande.',
+      'Contrôler le niveau de liquide de boîte si applicable.',
+      'Faire diagnostiquer le mécanisme de changement de vitesse.',
+      'Ne pas forcer le levier si le passage de vitesse est difficile.'
+    ],
+    video:'https://www.youtube.com/results?search_query=vitesses+passent+mal+voiture'
+  },
+  {
+    id:'direction-dure',
+    cat:'Symptôme',
+    icon:'🛞',
+    title:'Direction dure ou bruyante',
+    short:'Le volant est difficile à tourner ou émet un bruit.',
+    tags:'direction assistance volant bruit',
+    urgency:'Moyen — si la direction devient instable, arrêter.',
+    body:[
+      'Le système d’assistance ou les composants de direction peuvent être usés.',
+      'Une direction lourde peut être due à une faible pression hydraulique ou mécanique.',
+      'Un bruit de direction peut aussi venir d’une pièce de suspension ou de roue.'
+    ],
+    solution:[
+      'Vérifier le niveau de liquide d’assistance direction si applicable.',
+      'Contrôler l’usure des éléments de direction.',
+      'Faire contrôler la géométrie et la suspension si la direction est lourde.',
+      'Ne pas poursuivre le trajet si la direction est instable ou chargée.'
+    ],
+    video:'https://www.youtube.com/results?search_query=direction+dure+voiture'
+  },
+  {
+    id:'vibrations',
+    cat:'Symptôme',
+    icon:'〰️',
+    title:'La voiture vibre',
+    short:'Vibration au ralenti ou en roulant.',
+    tags:'vibration roue pneu balance',
+    urgency:'Moyen — si les vibrations sont fortes, arrêter.',
+    body:[
+      'Les causes peuvent venir des pneus, roues, freins ou supports moteur.',
+      'La vitesse ou la phase de rotation aide à identifier le secteur concerné.',
+      'Des vibrations fortes peuvent rendre la conduite dangereuse.'
+    ],
+    solution:[
+      'Vérifier l’équilibrage et l’état des pneus.',
+      'Contrôler les roues et le parallélisme.',
+      'Inspecter les disques et plaquettes de frein.',
+      'Faire contrôler les supports moteur et la suspension si les vibrations persistent.'
+    ],
+    video:'https://www.youtube.com/results?search_query=voiture+vibre+causes'
+  },
+  {
+    id:'amortisseurs',
+    cat:'Pièce',
+    icon:'🚘',
+    title:'Amortisseurs / suspension',
+    short:'Contribuent à la stabilité et au confort.',
+    tags:'amortisseur suspension voiture rebond',
+    urgency:'Moyen — si tenue de route dégradée, vérifier rapidement.',
+    body:[
+      'Des amortisseurs usés provoquent des rebonds, des bruits et une tenue de route moins stable.',
+      'Le symptôme peut être confondu avec des pneus ou une géométrie défectueuse.',
+      'La sécurité et l’adhérence dépendent de la suspension.'
+    ],
+    solution:[
+      'Contrôler l’usure des amortisseurs et des pièces de suspension.',
+      'Vérifier l’état des pneus et leur usure irrégulière.',
+      'Faire aligner les roues si la voiture dérive.',
+      'Ne pas rouler si la tenue de route semble instable.'
+    ],
+    video:'https://www.youtube.com/results?search_query=amortisseurs+voiture+symptomes'
+  },
+  {
+    id:'pneus-usure',
+    cat:'Pièce',
+    icon:'🛞',
+    title:'Pneus usés ou endommagés',
+    short:'Usure excessive ou déformation des pneus.',
+    tags:'pneu usure crevaison pression',
+    urgency:'Moyen — ne pas rouler avec pneu endommagé.',
+    body:[
+      'L’adhérence et le freinage dépendent de l’état des pneus.',
+      'Une usure irrégulière peut signaler un problème de géométrie ou de suspension.',
+      'Le gonflage est crucial à la sécurité.'
+    ],
+    solution:[
+      'Contrôler la pression à froid selon la recommandation du constructeur.',
+      'Vérifier l’usure et contrôler la géométrie si elle est irrégulière.',
+      'Remplacer les pneus usés ou endommagés.',
+      'Ne pas rouler sur un pneu crevé ou très dégonflé.'
+    ],
+    video:'https://www.youtube.com/results?search_query=pneus+usures+voiture'
+  },
+  {
+    id:'alternateur',
+    cat:'Pièce',
+    icon:'⚙️',
+    title:'Alternateur',
+    short:'Produit l’électricité et recharge la batterie.',
+    tags:'alternateur charge batterie',
+    urgency:'Moyen — si le voyant batterie reste allumé, vérifier vite.',
+    body:[
+      'Une panne d’alternateur peut entraîner l’arrêt du moteur à cause de la batterie.',
+      'Le voyant de charge est souvent le premier signe.',
+      'L’alternateur, la batterie et la courroie doivent être vérifiés ensemble.'
+    ],
+    solution:[
+      'Mesurer le voltage de charge du système.',
+      'Vérifier la courroie et les branchements.',
+      'Tester l’alternateur et la batterie séparément.',
+      'Remplacer la pièce défectueuse avant que la voiture ne s’arrête complètement.'
+    ],
+    video:'https://www.youtube.com/results?search_query=alternateur+voiture+probleme'
+  },
+  {
+    id:'batterie-faible',
+    cat:'Pièce',
+    icon:'🔋',
+    title:'Batterie faible ou déchargée',
+    short:'Le véhicule démarre difficilement ou pas du tout.',
+    tags:'batterie faible charge demarrage',
+    urgency:'Moyen — faire vérifier avant un long trajet.',
+    body:[
+      'Une batterie déchargée empêche le démarrage.',
+      'Le problème peut venir de la batterie elle-même ou d’un défaut de charge.',
+      'Un voyant de batterie ou un moteur qui cliquète souvent sont des indices.'
+    ],
+    solution:[
+      'Contrôler l’état de la batterie et la tension.',
+      'Vérifier le système de charge et l’alternateur.',
+      'Nettoyer ou resserrer les bornes s’il y a corrosion.',
+      'Remplacer la batterie si elle ne tient pas la charge.'
+    ],
+    video:'https://www.youtube.com/results?search_query=batterie+faible+voiture'
+  },
+  {
+    id:'injecteur',
+    cat:'Pièce',
+    icon:'⛽',
+    title:'Injecteurs / carburation',
+    short:'Mauvais mélange air-carburant ou moteur irrégulier.',
+    tags:'injecteur carburant moteur ralenti',
+    urgency:'Moyen — si moteur irrégulier, vérifier.',
+    body:[
+      'Les injecteurs ou la pompe à carburant peuvent provoquer un ralenti irrégulier.',
+      'Le véhicule peut tourner ou accélérer de manière instable.',
+      'Un mauvais mélange peut aussi générer des fumées ou de la perte de puissance.'
+    ],
+    solution:[
+      'Vérifier le filtre à carburant et le système de pompe.',
+      'Faire un diagnostic d’injection ou de pression carburant.',
+      'Contrôler la qualité du carburant et les injecteurs.',
+      'Ne pas rouler longtemps si le moteur tourne mal ou cale.'
+    ],
+    video:'https://www.youtube.com/results?search_query=injecteurs+voiture+probleme'
+  },
+  {
+    id:'climatisation',
+    cat:'Symptôme',
+    icon:'❄️',
+    title:'La climatisation ne refroidit plus',
+    short:'L’air reste tiède ou faiblement froid.',
+    tags:'climatisation froid air froid',
+    urgency:'Moyen — faire contrôler si le système ne fonctionne plus.',
+    body:[
+      'Le système peut avoir un manque de frigorigène, un débit faible ou un défaut électrique.',
+      'Le filtre habitacle ou le compresseur peuvent aussi être concernés.',
+      'Le symptôme dépend du véhicule et de la saison.'
+    ],
+    solution:[
+      'Vérifier le niveau de frigorigène et le débit d’air.',
+      'Contrôler le filtre habitacle et le compresseur.',
+      'Faire contrôler la pression du circuit frigorifique.',
+      'Ne pas manipuler le système sans formation adaptée.'
+    ],
+    video:'https://www.youtube.com/results?search_query=climatisation+ne+refroidit+plus'
+  },
+  {
+    id:'essuie-glaces',
+    cat:'Symptôme',
+    icon:'🌧️',
+    title:'Essuie-glaces inefficaces',
+    short:'Les balais ne retirent pas l’eau ou ne bougent plus.',
+    tags:'essuie-glaces moteur balais lave-glace',
+    urgency:'Moyen — ne pas conduire si la visibilité est trop réduite.',
+    body:[
+      'Le problème peut venir des balais, du moteur d’essuie-glaces ou d’un fusible.',
+      'Le niveau de lave-glace peut aussi intervenir.',
+      'Un mauvais fonctionnement peut devenir dangereux en pluie.'
+    ],
+    solution:[
+      'Vérifier le niveau de liquide lave-glace.',
+      'Contrôler l’état des balais et le mécanisme.',
+      'Vérifier le fusible et le moteur d’essuie-glaces.',
+      'Changer les balais si l’eau est mal évacuée.'
+    ],
+    video:'https://www.youtube.com/results?search_query=essuie+glace+ne+fonctionne+plus'
+  },
+  {
+    id:'frein-main',
+    cat:'Symptôme',
+    icon:'🧱',
+    title:'Frein de main ne tient pas',
+    short:'La voiture bouge même quand le frein de stationnement est serré.',
+    tags:'frein de main parking voiture',
+    urgency:'Moyen — vérifier avant de partir.',
+    body:[
+      'Le problème peut venir du câble, du mécanisme ou du tambour/roue.',
+      'Un frein de main qui ne tient pas est un symptôme sérieux.',
+      'Le véhicule peut bouger si l’immobilisation est insuffisante.'
+    ],
+    solution:[
+      'Vérifier l’état du mécanisme et des câbles.',
+      'Contrôler le système de frein de stationnement.',
+      'Faire contrôler la roue ou le tambour si nécessaire.',
+      'Ne pas laisser le véhicule en pente sans vérification.'
+    ],
+    video:'https://www.youtube.com/results?search_query=frein+de+main+ne+tient+pas'
+  },
+  {
+    id:'fuite-carburant',
+    cat:'Symptôme',
+    icon:'⛽',
+    title:'Fuite de carburant',
+    short:'Odeur forte ou liquide sous le véhicule.',
+    tags:'fuite carburant essence diesel pompe',
+    urgency:'Rouge — ne pas rouler, risque d’incendie.',
+    body:[
+      'Une fuite de carburant est particulièrement dangereuse.',
+      'Le véhicule peut sentir le carburant ou présenter des traces sous le moteur.',
+      'Le risque est élevé sur les véhicules à essence ou diesel.'
+    ],
+    solution:[
+      'Ne pas faire tourner le moteur si une fuite est suspectée.',
+      'Éloigner le véhicule de toute flamme ou étincelle.',
+      'Faire contrôler le circuit par un professionnel.',
+      'Ne pas rouler tant que la fuite n’a pas été réparée.'
+    ],
+    video:'https://www.youtube.com/results?search_query=fuite+carburant+voiture'
+  },
+  {
+    id:'courroie-deraillee',
+    cat:'Pièce',
+    icon:'🔗',
+    title:'Courroie ou accessoires',
+    short:'Bruit de sifflement ou moteur qui tourne mal.',
+    tags:'courroie poulie accessoire',
+    urgency:'Moyen — contrôler avant qu’elle ne casse.',
+    body:[
+      'La courroie d’accessoire entraine l’alternateur, la pompe à eau et parfois la climatisation.',
+      'Une courroie usée ou cassée peut provoquer un arrêt moteur.',
+      'Le bruit de sifflement est souvent le premier signe.'
+    ],
+    solution:[
+      'Contrôler le bon état de la courroie et le tendencement.',
+      'Inspecter les poulies et le système de distribution selon le moteur.',
+      'Ne pas conduire si la courroie semble usée ou cassée.',
+      'Faire remplacer le kit si l’état est douteux.'
+    ],
+    video:'https://www.youtube.com/results?search_query=courroie+accessoire+voiture'
+  },
+  {
+    id:'roulement-roue',
+    cat:'Pièce',
+    icon:'🧰',
+    title:'Roulement ou roue bruitante',
+    short:'Bruit de grattement ou de roulement sur la roue.',
+    tags:'roulement roue bruit roulement',
+    urgency:'Moyen — contrôler si le bruit s’intensifie.',
+    body:[
+      'Un roulement de roue ou un palier défectueux peut produire un bruit de grincement.',
+      'Le bruit peut augmenter avec la vitesse.',
+      'L’état de la roue et la suspension doivent être vérifiés.'
+    ],
+    solution:[
+      'Vérifier l’état des roulements et des roues.',
+      'Contrôler le serrage des écrous et le jeu roue.',
+      'Faire une inspection de la suspension si le bruit persiste.',
+      'Ne pas rouler si le bruit devient fort ou si la voiture vibre.'
+    ],
+    video:'https://www.youtube.com/results?search_query=bruit+roulement+roue+voiture'
+  },
+  {
+    id:'fuite-echappement',
+    cat:'Symptôme',
+    icon:'💨',
+    title:'Fuite ou bruit d’échappement',
+    short:'La voiture fait un bruit fort ou les gaz semblent s’échapper.',
+    tags:'echappement fuite tuyau silencieux',
+    urgency:'Moyen — si le bruit ne disparaît pas, contrôler.',
+    body:[
+      'Un tuyau ou silencieux usé peut créer un bruit inhabituel.',
+      'Une fuite d’échappement peut aussi provoquer une odeur de gaz.',
+      'Le système d’échappement est important pour le moteur et la sécurité.'
+    ],
+    solution:[
+      'Vérifier le silencieux, les tuyaux et les fixations.',
+      'Contrôler la présence d’une fuite ou d’un trou.',
+      'Faire examiner le système si l’odeur de gaz devient forte.',
+      'Ne pas rouler si l’échappement semble endommagé.'
+    ],
+    video:'https://www.youtube.com/results?search_query=fuite+echappement+voiture'
+  },
+  {
+    id:'ventilateur-refroidissement',
+    cat:'Pièce',
+    icon:'🌬️',
+    title:'Ventilateur de refroidissement',
+    short:'Le moteur ne refroidit pas correctement ou le ventilateur reste inactif.',
+    tags:'ventilateur refroidissement moteur',
+    urgency:'Moyen — si la température monte, arrêter.',
+    body:[
+      'Le ventilateur aide à évacuer la chaleur du moteur.',
+      'Un défaut peut générer une surchauffe rapide.',
+      'Le ventilateur est important surtout à basse vitesse ou au ralenti.'
+    ],
+    solution:[
+      'Vérifier le bon fonctionnement du ventilateur.',
+      'Contrôler le fusible ou le relais.',
+      'Vérifier l’état du radiateur et du liquide.',
+      'Ne pas rouler si la température monte sans ralentissement.'
+    ],
+    video:'https://www.youtube.com/results?search_query=ventilateur+refroidissement+voiture'
+  },
+  {
+    id:'filtre-air',
+    cat:'Pièce',
+    icon:'🌬️',
+    title:'Filtre à air sale',
+    short:'Le moteur manque d’air ou perd du rendement.',
+    tags:'filtre air moteur puissance',
+    urgency:'Moyen — vérifier lors d’entretien.',
+    body:[
+      'Un filtre à air bouché peut réduire l’apport d’air.',
+      'Le moteur peut perdre de la puissance ou tourner moins bien.',
+      'Le symptôme peut être confondu avec un autre défaut d’admission.'
+    ],
+    solution:[
+      'Vérifier l’état du filtre à air.',
+      'Le remplacer si il est très sale ou bouché.',
+      'Contrôler les conduits et le boîtier d’admission.',
+      'Faire diagnostiquer si le problème perdure.'
+    ],
+    video:'https://www.youtube.com/results?search_query=filtre+a+air+voiture'
+  },
+  {
+    id:'turbo',
+    cat:'Pièce',
+    icon:'🚀',
+    title:'Turbo / suralimentation',
+    short:'Le moteur a du mal à monter en puissance ou un bruit apparaît.',
+    tags:'turbo suralimentation puissance bruit',
+    urgency:'Moyen — faire contrôler si le moteur perd de la puissance.',
+    body:[
+      'Le turbo peut perdre de l’efficacité avec le temps.',
+      'Un bruit de sifflement ou une perte de couple peut être le signal.',
+      'Si le turbo est endommagé, la panne peut se généraliser.'
+    ],
+    solution:[
+      'Vérifier les conduits d’air et le turbo.',
+      'Contrôler les éventuelles fuites ou surconsommation d’huile.',
+      'Faire contrôler la pression et l’état du turbo.',
+      'Ne pas rouler longtemps avec un turbo endommagé.'
+    ],
+    video:'https://www.youtube.com/results?search_query=turbo+voiture+probleme'
+  },
+  {
+    id:'voyant-batterie',
+    cat:'Voyant',
+    icon:'🔋',
+    title:'Voyant batterie / charge',
+    short:'Le système de charge peut être faillant.',
+    tags:'voyant batterie charge alternateur',
+    urgency:'Moyen — contrôler rapidement.',
+    body:[
+      'Ce voyant signale souvent un problème de charge, pas seulement de batterie.',
+      'Alternateur, courroie, batterie ou branchements peuvent être en cause.',
+      'Une batterie vide fait perdre des fonctions très vite.'
+    ],
+    solution:[
+      'Vérifier la tension de charge du véhicule.',
+      'Contrôler la courroie et l’alternateur.',
+      'Faire tester la batterie et les connexions.',
+      'Ne pas débrancher la batterie moteur tournant pour tester.'
+    ],
+    video:'https://www.youtube.com/results?search_query=voyant+batterie+charge+voiture'
+  },
+  {
+    id:'voyant-abs',
+    cat:'Voyant',
+    icon:'🟡',
+    title:'Voyant ABS',
+    short:'Le système antiblocage des roues a un défaut.',
+    tags:'abs voiture voyant',
+    urgency:'Moyen — faire vérifier rapidement.',
+    body:[
+      'ABS signifie Anti-lock Braking System.',
+      'Le freinage classique peut fonctionner, mais l’ABS peut être inactif.',
+      'Le système peut être concerné par des capteurs, courants ou module.'
+    ],
+    solution:[
+      'Faire lire les défauts ABS avec diagnostic.',
+      'Vérifier les capteurs de roue et les câbles.',
+      'Contrôler l’état des freins et des disques.',
+      'Ne pas ignorer un voyant ABS si tu sens une différence au freinage.'
+    ],
+    video:'https://www.youtube.com/results?search_query=voyant+ABS+voiture'
+  },
+  {
+    id:'voyant-airbag',
+    cat:'Voyant',
+    icon:'🟡',
+    title:'Voyant airbag / SRS',
+    short:'Le système de sécurité peut nécessiter un contrôle.',
+    tags:'airbag srs voyant securite',
+    urgency:'Moyen — contrôle recommandé.',
+    body:[
+      'Le voyant signifie qu’un problème de sécurité peut exister.',
+      'Le système airbag ne doit pas être négligé.',
+      'Un diagnostic professionnel est recommandé.'
+    ],
+    solution:[
+      'Faire lire les codes défauts airbag.',
+      'Ne pas déconnecter les capteurs ou câbles sans savoir faire.',
+      'Faire contrôler la batterie et les connexions si le système s’éteint et se rallume.',
+      'Ne pas ignorer un voyant actif rouge ou orange sur ce système.'
+    ],
+    video:'https://www.youtube.com/results?search_query=voyant+airbag+explication'
+  },
+  {
+    id:'voyant-frein',
+    cat:'Voyant',
+    icon:'🛑',
+    title:'Voyant frein rouge',
+    short:'Le système de frein peut signaler un problème.',
+    tags:'voyant frein rouge liquide',
+    urgency:'Rouge — arrêter et contrôler.',
+    body:[
+      'Le voyant peut correspondre au frein de parking, au liquide de frein ou à un défaut du système.',
+      'Le sens varie selon le véhicule.',
+      'Toujours considérer ce symptôme comme sérieux.'
+    ],
+    solution:[
+      'Vérifier le frein de parking.',
+      'Contrôler le niveau de liquide de frein.',
+      'Faire contrôler les plaquettes, disques et capteurs.',
+      'Ne pas reprendre la route si le freinage semble altéré.'
+    ],
+    video:'https://www.youtube.com/results?search_query=voyant+frein+rouge+voiture'
+  },
+  {
+    id:'pression-pneu',
+    cat:'Voyant',
+    icon:'🛞',
+    title:'Voyant pression des pneus',
+    short:'Un pneu est sous-gonflé ou le système a détecté un écart.',
+    tags:'pression pneus tpms',
+    urgency:'Moyen — vérifier à froid.',
+    body:[
+      'Le système TPMS peut détecter une pression anormale ou un pneu dégradé.',
+      'Un pneu sous-gonflé réduit l’adhérence et la sécurité.',
+      'Le problème peut venir d’un défaut de pneu ou d’une vanne.'
+    ],
+    solution:[
+      'Vérifier la pression à froid selon la plaque signalétique.',
+      'Contrôler l’état du pneu et l’usure.',
+      'Inspecter les valves et les capteurs si le véhicule est équipé.',
+      'Ne pas rouler si le pneu est très dégonflé ou endommagé.'
+    ],
+    video:'https://www.youtube.com/results?search_query=voyant+pression+pneus'
+  },
+  {
+    id:'feux',
+    cat:'Symptôme',
+    icon:'💡',
+    title:'Un feu ou un phare ne fonctionne plus',
+    short:'L’éclairage extérieur est défaillant ou vacille.',
+    tags:'feu phare ampoule fusible',
+    urgency:'Moyen — réparer rapidement.',
+    body:[
+      'Le défaut peut venir d’une ampoule, d’un fusible ou d’un connecteur.',
+      'L’éclairage est crucial pour la visibilité et la sécurité.',
+      'Les yeux d’un autre conducteur peuvent aussi être impactés.'
+    ],
+    solution:[
+      'Vérifier l’ampoule et le fusible.',
+      'Contrôler le connecteur et un éventuel souci d’électricité.',
+      'Changer l’ampoule adaptée au véhicule.',
+      'Ne pas conduire si la visibilité est insuffisante.'
+    ],
+    video:'https://www.youtube.com/results?search_query=phare+voiture+ne+fonctionne+plus'
+  },
+  {
+    id:'vitres-electriques',
+    cat:'Symptôme',
+    icon:'🪟',
+    title:'Vitre électrique qui ne fonctionne plus',
+    short:'La vitre ne monte pas, ne descend plus ou bouge mal.',
+    tags:'vitre électrique porte moteur',
+    urgency:'Moyen — vérifier sans manipuler des pièces mobiles.',
+    body:[
+      'Le moteur, le commutateur, le fusible ou le mécanisme peuvent être responsables.',
+      'La causes dépendent du véhicule et de la porte.',
+      'Un mauvais fonctionnement peut être plus sérieux qu’un simple défaut de commande.'
+    ],
+    solution:[
+      'Vérifier le fusible associé.',
+      'Contrôler le moteur de vitre et la tige ou mécanisme.',
+      'Tester le bouton de commande et les connexions.',
+      'Ne pas démonter la porte sans procédure adaptée.'
+    ],
+    video:'https://www.youtube.com/results?search_query=vitre+electrique+probleme'
+  }
+];
+
+/* helpers */
+function normalizeText(value){ return String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+function isUrgentText(t){ return /rouge|arrête|arrête-toi|ne continue pas|danger|fumée|fuite de carburant|incendie|immédiat|immediat/i.test(String(t||'')); }
+
+/* state */
+let category = 'Tous';
+let urgentOnly = false;
+
+/* render results */
+function render(){
+  const q = normalizeText(document.getElementById('search').value.trim());
+  const resultsEl = document.getElementById('results');
+  const filtered = items.filter(item => {
+    if(category !== 'Tous' && item.cat !== category) return false;
+    if(urgentOnly && !isUrgentText(item.urgency) && !/fumée|arrête|ne continue pas|danger/.test(item.short)) return false;
+    const hay = normalizeText(`${item.title} ${item.short} ${item.tags} ${item.cat}`);
+    if(!q) return true;
+    return hay.includes(q);
+  });
+
+  document.getElementById('count').textContent = filtered.length;
+  if(!filtered.length){
+    resultsEl.innerHTML = '';
+    document.getElementById('empty').style.display = 'block';
+  } else {
+    document.getElementById('empty').style.display = 'none';
+    resultsEl.innerHTML = filtered.map(item => `
+      <article class="card" role="listitem" tabindex="0" aria-labelledby="t-${item.id}">
+        <div style="display:flex;gap:12px;align-items:center">
+          <div class="symbol" aria-hidden="true">${item.icon}</div>
+          <div style="flex:1">
+            <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+              <span id="t-${item.id}" style="font-weight:700">${item.title}</span>
+              <span class="pill">${item.cat}</span>
+            </div>
+            <p style="margin:6px 0 0;color:var(--muted)">${item.short}</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn ghost" type="button" onclick="openDetail('${item.id}')">Lire la fiche</button>
+          <a class="btn" style="padding:8px 10px" target="_blank" rel="noopener" href="${item.video}">Vidéos</a>
+        </div>
+      </article>
+    `).join('');
+  }
+}
+
+/* open detail panel */
+function openDetail(id){
+  const item = items.find(i=>i.id===id);
+  if(!item) return;
+  const detail = document.getElementById('detail');
+  const isHigh = /rouge|danger|arrêt|arrete|incendie/i.test(String(item.urgency));
+  const isMedium = /orange|moyen|vérifier|verifier/i.test(String(item.urgency));
+  const cls = isHigh ? 'urgency-high' : (isMedium ? 'urgency-medium' : 'urgency-low');
+  const solutions = Array.isArray(item.solution) && item.solution.length ? item.solution
+                    : Array.isArray(item.solutions) && item.solutions.length ? item.solutions
+                    : (item.solution || item.solutions) ? [item.solution||item.solutions] : [];
+
+  detail.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+      <div>
+        <div class="eyebrow">${item.cat} · Fiche pratique</div>
+        <h3>${item.icon} ${item.title}</h3>
+        <div style="margin-top:6px"><span class="urgency-badge ${cls}">${item.urgency}</span></div>
+      </div>
+      <div>
+        <button class="btn ghost" onclick="closeDetail()" aria-label="Fermer la fiche">Fermer</button>
+      </div>
+    </div>
+
+    <div class="detail-grid" style="margin-top:12px">
+      <div>
+        <h4>Explication simple</h4>
+        <p style="color:var(--muted)">${item.short}</p>
+        <ul style="color:var(--muted);margin-top:8px">
+          ${Array.isArray(item.body) ? item.body.map(li=>`<li>${li}</li>`).join('') : `<li>${item.body||'Consulte le manuel ou un professionnel.'}</li>`}
+        </ul>
+
+        <h4 style="margin-top:12px">Solutions possibles</h4>
+        <ul style="color:var(--muted)">
+          ${solutions.length ? solutions.map(s=>`<li>${s}</li>`).join('') : '<li>Vérifier le système avec un professionnel ou le manuel du véhicule.</li>'}
+        </ul>
+
+        <h4 style="margin-top:12px">À faire (contrôles simples)</h4>
+        <ul style="color:var(--muted)">
+          <li>Noter les symptômes : couleur du voyant, bruit, moment d’apparition.</li>
+          <li>Vérifier les niveaux (huile, liquide refroidissement, carburant) à moteur froid.</li>
+          <li>Éviter toute manipulation dangereuse ou intervention sans équipement.</li>
+        </ul>
+
+        <h4 style="margin-top:12px">Quand appeler un pro</h4>
+        <ul style="color:var(--muted)">
+          <li>Voyant rouge persistant (huile, température, frein).</li>
+          <li>Fuite de carburant, fumée, odeur de brûlé.</li>
+          <li>Freinage altéré, direction incontrôlable, perte majeure de puissance.</li>
+        </ul>
+
+        <p class="small" style="margin-top:10px">Information générale. Vérifie toujours le manuel du véhicule et fais contrôler le véhicule si le symptôme s’aggrave.</p>
+      </div>
+
+      <aside class="detail-side">
+        <h4>Ressources</h4>
+        <p class="small">Mots-clés pour recherche ou pour le mécanicien :</p>
+        <div style="margin-top:8px;color:var(--muted)">${item.tags}</div>
+        <div style="margin-top:12px"><a class="video-link" target="_blank" rel="noopener" href="${item.video}">▶ Chercher des vidéos</a></div>
+      </aside>
+    </div>
+  `;
+  detail.style.display = 'block';
+  detail.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function closeDetail(){
+  const detail = document.getElementById('detail');
+  detail.style.display = 'none';
+}
+
+/* diagnostic guidé */
+const symptomRules = [
+  {keys:['ne demarre','demarre pas','demarrage','clic','clac'], ids:['demarrage-difficile','batterie-faible','alternateur','moteur-cale']},
+  {keys:['frein','freine','freinage','grince'], ids:['freinage-altere','bruit-frein','voyant-frein','frein-main']},
+  {keys:['bruit','claque','siffle','grondement'], ids:['bruit-moteur','roulement-roue','fuite-echappement','vibrations']},
+  {keys:['fumee','brule','odeur','brûl'], ids:['fuite-carburant','fuite-huile','fuite-coolant']},
+  {keys:['chauffe','surchauffe','temperature'], ids:['surchauffe','ventilateur-refroidissement','fuite-coolant']},
+  {keys:['fuite','goutte','liquide sous','tache'], ids:['fuite-huile','fuite-coolant','fuite-carburant','fuite-echappement']},
+  {keys:['vibre','vibration','tremble'], ids:['vibrations','pneus-usure','roulement-roue','amortisseurs']},
+  {keys:['puissance','accelere mal','perte','manque de couple','mou'], ids:['perte-puissance','turbo','injecteur','moteur-cale']},
+  {keys:['direction','volant','tourner'], ids:['direction-dure','amortisseurs','pneus-usure']},
+  {keys:['vitesses','boite','embrayage','accroche'], ids:['vitesses-passent-mal','embrayage-patine']},
+  {keys:['batterie','alternateur','charge'], ids:['batterie-faible','alternateur','voyant-batterie']},
+  {keys:['pneu','roue','creve','pression'], ids:['pression-pneu','pneus-usure','vibrations','roulement-roue']},
+  {keys:['clim','air froid','climatisation'], ids:['climatisation']},
+  {keys:['essuie','pluie','lave glace'], ids:['essuie-glaces']},
+  {keys:['phare','feu','clignotant','lumiere'], ids:['feux']},
+  {keys:['airbag','srs'], ids:['voyant-airbag']},
+  {keys:['abs'], ids:['voyant-abs']},
+  {keys:['courroie','sifflement'], ids:['courroie-deraillee','ventilateur-refroidissement']},
+  {keys:['moteur','voyant moteur'], ids:['voyant-moteur','perte-puissance','moteur-cale']},
+  {keys:['huile'], ids:['fuite-huile']},
+  {keys:['turbo','suralimentation'], ids:['turbo','perte-puissance']},
+  {keys:['fumee habitacle','odeur de brule'], ids:['fuite-carburant','fumee-habitacle']}
+];
+
+function diagnose(){
+  const raw = document.getElementById('problemText').value.trim();
+  const box = document.getElementById('diagnosis');
+  if(!raw){
+    box.innerHTML = `<h3>Décris ce que tu observes</h3><p>Ajoute le bruit, le voyant, le moment où cela arrive et le modèle si tu le connais.</p>`;
+    box.style.display='block'; box.scrollIntoView({behavior:'smooth',block:'start'}); return;
+  }
+  const q = normalizeText(raw);
+  const ids = [];
+  for(const rule of symptomRules){
+    if(rule.keys.some(k => q.includes(normalizeText(k)))){
+      ids.push(...rule.ids);
+    }
+  }
+  const unique = [...new Set(ids)];
+  const matches = unique.map(id => items.find(x=>x.id===id)).filter(Boolean).slice(0,8);
+  const urgent = /fumee|brule|fuite de carburant|fuite|huile|temperature|surchauffe/i.test(q);
+
+  box.innerHTML = `
+    <div class="eyebrow">Pistes de recherche</div>
+    <h3>Voici des sujets à vérifier</h3>
+    <p>Ce résultat automatique est une première orientation, pas un diagnostic confirmé.</p>
+    ${matches.length ? `<div class="cards">${matches.map(x=>`
+      <article class="card" role="listitem">
+        <div style="display:flex;gap:12px;align-items:center">
+          <div class="symbol">${x.icon}</div>
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <strong>${x.title}</strong><span class="pill">${x.cat}</span>
+            </div>
+            <p style="color:var(--muted);margin-top:6px">${x.short}</p>
+            <div style="margin-top:8px">
+              <button class="btn ghost" onclick="openDetail('${x.id}')">Lire la fiche</button>
+            </div>
+          </div>
+        </div>
+      </article>`).join('')}</div>` : `<p>Aucune correspondance exacte trouvée. Essaie des mots simples comme « bruit », « voyant », « démarre », « chauffe », « frein » ou demande à un mécanicien.</p>`}
+    ${urgent ? `<div class="safety red" style="margin-top:12px"><strong>Prudence :</strong> si tu constates de la fumée, une odeur de carburant, un problème de freinage ou une alerte rouge de température/pression d’huile, arrête-toi en sécurité et demande de l’aide.</div>` : ''}
+    <p class="small" style="margin-top:8px">Les causes varient selon la marque, le modèle, l’année et le moteur. Ne remplace pas une pièce sur la seule base de cette suggestion.</p>
+  `;
+  box.style.display='block';
+  box.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* EVENTS */
+document.getElementById('searchForm').addEventListener('submit', function (event) {
+  event.preventDefault();
+  render();
+});
+document.getElementById('diagnoseBtn').addEventListener('click', diagnose);
+document.getElementById('search').addEventListener('input', render);
+document.getElementById('clearBtn').addEventListener('click', function(){
+  document.getElementById('search').value = '';
+  document.getElementById('problemText').value = '';
+  document.getElementById('diagnosis').style.display = 'none';
+  category = 'Tous';
+  urgentOnly = false;
+  document.querySelectorAll('.filter').forEach(b => b.classList.toggle('active', b.dataset.cat==='Tous'));
+  document.getElementById('urgentToggle').dataset.urgent = 'false';
+  render();
+});
+
+/* filters */
+document.querySelectorAll('.filter').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if(btn.id === 'urgentToggle'){
+      urgentOnly = btn.dataset.urgent === 'false';
+      btn.dataset.urgent = urgentOnly ? 'true' : 'false';
+      btn.classList.toggle('active', urgentOnly);
+      return render();
+    }
+    category = btn.dataset.cat;
+    document.querySelectorAll('.filter').forEach(v=>v.classList.toggle('active', v===btn));
+    render();
+  });
+});
+
+/* pieces cards (populate from items) */
+(function populatePieces(){
+  const wrap = document.getElementById('piecesCards');
+  const pieceItems = items.filter(i=>i.cat === 'Pièce').slice(0,12);
+  wrap.innerHTML = pieceItems.map(it => `
+    <article class="card">
+      <div style="display:flex;gap:12px;align-items:center">
+        <div class="symbol">${it.icon}</div>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <strong>${it.title}</strong><span class="pill">${it.cat}</span>
+          </div>
+          <p style="color:var(--muted);margin-top:6px">${it.short}</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn ghost" type="button" onclick="openDetail('${it.id}')">Voir la fiche</button>
+        <a class="btn" target="_blank" rel="noopener" href="${it.video}">Vidéos</a>
+      </div>
+    </article>
+  `).join('');
+})();
+
+/* mobile menu toggle */
+const burger = document.getElementById('burger');
+const mobileNav = document.getElementById('mobileNav');
+burger.addEventListener('click', () => {
+  const expanded = burger.getAttribute('aria-expanded') === 'true';
+  burger.setAttribute('aria-expanded', String(!expanded));
+  mobileNav.style.display = expanded ? 'none' : 'block';
+});
+
+/* keyboard shortcuts */
+document.addEventListener('keydown', (e) => {
+  if(e.key === '/' && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) {
+    e.preventDefault();
+    document.getElementById('search').focus();
+    return;
+  }
+  if(e.key === 'Escape') {
+    closeDetail();
+    mobileNav.style.display = 'none';
+    burger.setAttribute('aria-expanded', 'false');
+  }
+});
+
+/* initial render */
+document.getElementById('year').textContent = new Date().getFullYear();
+render();
+</script>
+</body>
+</html>
